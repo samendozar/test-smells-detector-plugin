@@ -5,10 +5,10 @@
 <plugin>
   <name>test-smells-detector-plugin Maven Mojo</name>
   <description></description>
-  <groupId>es.upm.smend.profundizacion</groupId>
+  <groupId>com.github.samendozar</groupId>
   <artifactId>test-smells-detector-plugin</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <goalPrefix>smelldetect</goalPrefix>
+  <version>1.0.5</version>
+  <goalPrefix>test-smells-detector</goalPrefix>
   <mojos>
     <mojo>
       <goal>test-smells-counter</goal>

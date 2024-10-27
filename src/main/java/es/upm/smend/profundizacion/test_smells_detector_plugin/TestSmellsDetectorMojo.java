@@ -23,6 +23,8 @@ public class TestSmellsDetectorMojo extends AbstractMojo{
 	MavenProject project;
 	@Parameter(property = "scope")
 	String scope;
+	File tempCsvFile = null;
+    FileWriter fileWriter = null;
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
@@ -35,13 +37,7 @@ public class TestSmellsDetectorMojo extends AbstractMojo{
         }else
         	getLog().info("Test Directory found!!!");
 
-        
-        // Define the temporary file
-        File tempCsvFile = null;
-        FileWriter fileWriter = null;
-        
         try {
-        	
             
         	// Create a temporary file
             tempCsvFile = File.createTempFile("testData", ".csv");
@@ -52,13 +48,11 @@ public class TestSmellsDetectorMojo extends AbstractMojo{
             /*
              * Recursively add each test file to TsDetect file input
              */
-            List<Path> pathList = Files.walk(testDir.toPath())
-                .filter(Files::isRegularFile)
-                .filter(path -> path.toString().endsWith(".java")).toList();
             
-            for(Path path : pathList) {
-            	analyzeTestFile(path, tempCsvFile, fileWriter);
-            }
+            Files.walk(testDir.toPath())
+            .filter(Files::isRegularFile)
+            .filter(path -> path.toString().endsWith(".java"))
+            .forEach(this::analyzeTestFile);
             
             // Flush and close the FileWriter
             fileWriter.flush();
@@ -88,7 +82,7 @@ public class TestSmellsDetectorMojo extends AbstractMojo{
 	 * the specified test file
 	 * @param testFilePath
 	 */
-	private void analyzeTestFile(Path testFilePath, File tempCsvFile, FileWriter fileWriter) {
+	private void analyzeTestFile(Path testFilePath) {
 
         try {
         	
