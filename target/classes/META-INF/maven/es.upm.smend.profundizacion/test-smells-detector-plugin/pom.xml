@@ -44,7 +44,7 @@
             <artifactId>maven-plugin-plugin</artifactId>
             <version>3.6.4</version>
             <configuration>
-                <goalPrefix>smelldetect</goalPrefix>
+                <goalPrefix>test-smells-detector</goalPrefix>
             </configuration>
   		</plugin>
   		<plugin>
