@@ -1,9 +1,11 @@
 package es.upm.smend.profundizacion.test_smells_detector_plugin;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -34,16 +36,49 @@ public class TestSmellsDetectorMojo extends AbstractMojo{
         	getLog().info("Test Directory found!!!");
 
         
-        /*
-         * Recursively add each test file to TsDetect file input
-         */
+        // Define the temporary file
+        File tempCsvFile = null;
+        FileWriter fileWriter = null;
+        
         try {
-            Files.walk(testDir.toPath())
+        	
+            
+        	// Create a temporary file
+            tempCsvFile = File.createTempFile("testData", ".csv");
+            fileWriter = new FileWriter(tempCsvFile);
+            
+            getLog().warn(String.format("Temporary CSV file created at: %s", tempCsvFile.getAbsolutePath()));
+            
+            /*
+             * Recursively add each test file to TsDetect file input
+             */
+            List<Path> pathList = Files.walk(testDir.toPath())
                 .filter(Files::isRegularFile)
-                .filter(path -> path.toString().endsWith(".java"))
-                .forEach(this::analyzeTestFile);
+                .filter(path -> path.toString().endsWith(".java")).toList();
+            
+            for(Path path : pathList) {
+            	analyzeTestFile(path, tempCsvFile, fileWriter);
+            }
+            
+            // Flush and close the FileWriter
+            fileWriter.flush();
+            
         } catch (IOException e) {
             getLog().error("Error while traversing test directory: " + testDir.getAbsolutePath(), e);
+        }finally {
+            // Clean up resources
+            try {
+                if (fileWriter != null) {
+                    fileWriter.close();
+                }
+                if (tempCsvFile != null) {
+                    // Optionally delete the temp file after use
+                    Files.deleteIfExists(tempCsvFile.toPath());
+                    System.out.println("Temporary CSV file deleted.");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         
 	}
@@ -53,8 +88,18 @@ public class TestSmellsDetectorMojo extends AbstractMojo{
 	 * the specified test file
 	 * @param testFilePath
 	 */
-	private void analyzeTestFile(Path testFilePath) {
-		System.out.println(testFilePath.getFileName());
+	private void analyzeTestFile(Path testFilePath, File tempCsvFile, FileWriter fileWriter) {
+
+        try {
+        	
+        	String srcClassPathStr = testFilePath.toString().strip().replace("Test", "");
+        	getLog().warn(String.format("Anadiendo Clase de Src: %s - Clase de Test: %s", srcClassPathStr, testFilePath.toString()));
+            // Write data to the CSV file
+            fileWriter.append(String.format("Test-Smells,%s,%s", testFilePath, srcClassPathStr));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 	}
 
 }
