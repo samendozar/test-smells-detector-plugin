@@ -42,7 +42,7 @@ public class TestSmellsDetectorMojo extends AbstractMojo{
         try {
             
         	// Create a temporary file
-            tempCsvFile = File.createTempFile("testData", ".csv");
+            tempCsvFile = new File(project.getBasedir(), "testData.csv");
             fileWriter = new FileWriter(tempCsvFile);
             
             getLog().warn(String.format("Temporary CSV file created at: %s", tempCsvFile.getAbsolutePath()));
@@ -59,6 +59,10 @@ public class TestSmellsDetectorMojo extends AbstractMojo{
             // Flush and close the FileWriter
             fileWriter.flush();
             
+            if (fileWriter != null) {
+                fileWriter.close();
+            }
+            
             callTsDetect();
             
         } catch (IOException e) {
@@ -66,9 +70,6 @@ public class TestSmellsDetectorMojo extends AbstractMojo{
         }finally {
             // Clean up resources
             try {
-                if (fileWriter != null) {
-                    fileWriter.close();
-                }
                 if (tempCsvFile != null) {
                     // Optionally delete the temp file after use
                     Files.deleteIfExists(tempCsvFile.toPath());
