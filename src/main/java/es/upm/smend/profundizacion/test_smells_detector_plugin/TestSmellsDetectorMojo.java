@@ -1,8 +1,10 @@
 package es.upm.smend.profundizacion.test_smells_detector_plugin;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -57,6 +59,8 @@ public class TestSmellsDetectorMojo extends AbstractMojo{
             // Flush and close the FileWriter
             fileWriter.flush();
             
+            callTsDetect();
+            
         } catch (IOException e) {
             getLog().error("Error while traversing test directory: " + testDir.getAbsolutePath(), e);
         }finally {
@@ -94,6 +98,33 @@ public class TestSmellsDetectorMojo extends AbstractMojo{
         } catch (IOException e) {
             e.printStackTrace();
         }
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void callTsDetect() {
+		try {
+			
+			Process process = Runtime.getRuntime().exec(String.format("java -jar %s/TestSmellDetector.jar testData.csv", project.getBasedir()));
+
+			StringBuilder output = new StringBuilder();
+
+			BufferedReader reader = new BufferedReader(
+			new InputStreamReader(process.getInputStream()));
+
+			String line;
+			
+			while ((line = reader.readLine()) != null) {
+				output.append(line + "\n");
+			}
+
+			process.waitFor();
+			
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
 	}
 
 }
