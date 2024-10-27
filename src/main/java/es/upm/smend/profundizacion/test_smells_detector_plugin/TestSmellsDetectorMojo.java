@@ -72,10 +72,10 @@ public class TestSmellsDetectorMojo extends AbstractMojo{
             try {
                 if (tempCsvFile != null) {
                     // Optionally delete the temp file after use
-                    Files.deleteIfExists(tempCsvFile.toPath());
+                    //Files.deleteIfExists(tempCsvFile.toPath());
                     System.out.println("Temporary CSV file deleted.");
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
