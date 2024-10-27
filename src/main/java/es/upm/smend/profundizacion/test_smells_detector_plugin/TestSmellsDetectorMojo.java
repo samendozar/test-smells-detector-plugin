@@ -91,7 +91,7 @@ public class TestSmellsDetectorMojo extends AbstractMojo{
 
         try {
         	
-        	String srcClassPathStr = testFilePath.toString().replace("Test", "");
+        	String srcClassPathStr = testFilePath.toString().replace("Test", "").replace("src/test/java", "src/main/java");
         	getLog().warn(String.format("Anadiendo Clase de Src: %s - Clase de Test: %s", srcClassPathStr, testFilePath.toString()));
             // Write data to the CSV file
             fileWriter.append(String.format("Test-Smells,%s,%s", testFilePath, srcClassPathStr));
