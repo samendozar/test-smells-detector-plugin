@@ -105,7 +105,8 @@ public class TestSmellsDetectorMojo extends AbstractMojo{
 	private void callTsDetect() {
 		try {
 			
-			Process process = Runtime.getRuntime().exec(String.format("java -jar %s/TestSmellDetector.jar testData.csv", project.getBasedir()));
+			String command = String.format("java -jar %s/lib/TestSmellDetector.jar %s", project.getBasedir(), tempCsvFile.getAbsolutePath());
+			Process process = Runtime.getRuntime().exec(command);
 
 			StringBuilder output = new StringBuilder();
 
